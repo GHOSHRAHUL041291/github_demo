@@ -1,0 +1,20 @@
+{
+	"name": "14_create_view_rate_code",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi_ldw"
+		},
+		"content": {
+			"query": "USE nyc_taxi_ldw\nGO\n\nDROP VIEW IF EXISTS bronze.vw_rate_code\nGO\n\nCREATE VIEW bronze.vw_rate_code\nAS\nSELECT rate_code_id, rate_code\nFROM\nOPENROWSET\n(\n    BULK 'raw/rate_code.json', \n    DATA_SOURCE = 'nyc_taxi_src',\n    FORMAT = 'CSV', \n    FIELDQUOTE = '0x0b', \n    FIELDTERMINATOR = '0x0b',\n    ROWTERMINATOR = '0x0b'\n)\nWITH\n(\n    jsondoc NVARCHAR(MAX)\n) AS rate_code\nCROSS APPLY OPENJSON(jsondoc)\nWITH\n(\n    rate_code_id TINYINT,\n    rate_code VARCHAR(20)\n)\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_ldw",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

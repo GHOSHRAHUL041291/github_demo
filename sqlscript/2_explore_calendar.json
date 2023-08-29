@@ -1,0 +1,20 @@
+{
+	"name": "2_explore_calendar",
+	"properties": {
+		"folder": {
+			"name": "Discovery"
+		},
+		"content": {
+			"query": "-- read calendar csv file\n\nCREATE EXTERNAL DATA SOURCE nyc_calendar_data_raw\nWITH ( LOCATION = 'https://synapsecoursedl00001.blob.core.windows.net/nyc-taxi-data/raw/')\n\n\nSELECT TOP 100 *\nFROM \nOPENROWSET (\n    BULK 'calendar.csv',\n    DATA_SOURCE = 'nyc_calendar_data_raw',\n    FORMAT = 'CSV',\n    PARSER_VERSION = '1.0',\n    FIRSTROW = 2\n    )\nWITH (\n    DATE_KEY INT,\n    DATE DATE,\n    YEAR SMALLINT,\n    MONTH TINYINT,\n    DAY TINYINT,\n    DAYNAME VARCHAR(10),\n    DAY_OF_YEAR SMALLINT,\n    WEEK_OF_MONTH TINYINT,\n    WEEK_OF_YEAR TINYINT,\n    MONTH_NAME VARCHAR(10),\n    YEAR_MONTH INT,\n    YEAR_WEEK INT\n    ) AS [cal]\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "NYC_TAXI_DISCOVERY",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

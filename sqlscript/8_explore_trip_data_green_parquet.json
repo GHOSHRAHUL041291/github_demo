@@ -1,0 +1,20 @@
+{
+	"name": "8_explore_trip_data_green_parquet",
+	"properties": {
+		"folder": {
+			"name": "Discovery"
+		},
+		"content": {
+			"query": "SELECT \n    trip_data_green_parquet.filename() AS file_name,\n    trip_data_green_parquet.filepath(1) AS year,\n    trip_data_green_parquet.filepath(2) AS month,\n    count(1) as trip_count\nFROM \nOPENROWSET\n(\n    BULK 'trip_data_green_parquet/year=*/month=*/*.parquet',\n    DATA_SOURCE = 'nyc_taxi_data_raw',\n    FORMAT = 'PARQUET'\n)\n--WITH\n--(\n--    tip_amount FLOAT,\n--    trip_type INT\n--)\nAS [trip_data_green_parquet]\nGROUP BY trip_data_green_parquet.filename(),trip_data_green_parquet.filepath(1),trip_data_green_parquet.filepath(2)\nORDER BY trip_data_green_parquet.filepath(1),trip_data_green_parquet.filepath(2),trip_data_green_parquet.filename();\n---EXEC sp_describe_first_result_set N'SELECT TOP 100 *...'\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "NYC_TAXI_DISCOVERY",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

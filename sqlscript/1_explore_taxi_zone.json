@@ -1,0 +1,20 @@
+{
+	"name": "1_explore_taxi_zone",
+	"properties": {
+		"folder": {
+			"name": "Discovery"
+		},
+		"content": {
+			"query": "-- Read from csv file\nSELECT TOP 100 * \nFROM\n OPENROWSET(\n    BULK 'https://synapsecoursedl00001.dfs.core.windows.net/nyc-taxi-data/raw/taxi_zone.csv',\n    FORMAT = 'CSV',\n    PARSER_VERSION = '2.0',\n    HEADER_ROW = TRUE\n    ) \n WITH(\n    LocationID SMALLINT,\n    Borough VARCHAR(15),\n    Zone VARCHAR(50),\n    service_zone VARCHAR(15)\n    ) AS [result]\n\n--select column type from dataset\nEXEC sp_describe_first_result_set N'SELECT TOP 100 * \nFROM\n OPENROWSET(\n    BULK ''https://synapsecoursedl00001.dfs.core.windows.net/nyc-taxi-data/raw/taxi_zone.csv'',\n    FORMAT = ''CSV'',\n    PARSER_VERSION = ''2.0'',\n    HEADER_ROW = TRUE\n    ) \n WITH(\n    LocationID SMALLINT,\n    Borough VARCHAR(15),\n    Zone VARCHAR(50),\n    service_zone VARCHAR(15)\n    ) AS [result]'\n\n\n--collate to UTF8 to avoid warnings\n\nSELECT TOP 100 * \nFROM\n OPENROWSET(\n    BULK 'https://synapsecoursedl00001.dfs.core.windows.net/nyc-taxi-data/raw/taxi_zone.csv',\n    FORMAT = 'CSV',\n    PARSER_VERSION = '2.0',\n    HEADER_ROW = TRUE\n    ) \n WITH(\n    LocationID SMALLINT,\n    Borough VARCHAR(15) COLLATE Latin1_General_100_CI_AI_SC_UTF8,\n    Zone VARCHAR(50) COLLATE Latin1_General_100_CI_AI_SC_UTF8,\n    service_zone VARCHAR(15) COLLATE Latin1_General_100_CI_AI_SC_UTF8\n    ) AS [result]\n\n-- create and use database with default UTF8 collation\n\nCREATE DATABASE NYC_TAXI_DISCOVERY;\n\nUSE NYC_TAXI_DISCOVERY;\n\nALTER DATABASE NYC_TAXI_DISCOVERY COLLATE Latin1_General_100_CI_AS_SC_UTF8;\n\n--select only few columns from the data set and name columns in proper format & use first row properly\n\nSELECT TOP 100 * \nFROM \nOPENROWSET \n(\n    BULK 'https://synapsecoursedl00001.dfs.core.windows.net/nyc-taxi-data/raw/taxi_zone_without_header.csv',\n    FORMAT = 'CSV',\n    PARSER_VERSION = '1.0',\n    FIRST_ROW = 2 \n) \nWITH(\n    LocationID SMALLINT 1,\n    Zone VARCHAR(50) 3,\n    service_zone VARCHAR(15) 4\n    ) AS [result]\n\n\n--create external data source\n\nCREATE EXTERNAL DATA SOURCE nyc_taxi_data_raw\nWITH ( LOCATION = 'https://synapsecoursedl00001.dfs.core.windows.net/nyc-taxi-data/raw/')\n\n--use external data source\nSELECT TOP 100 * \nFROM \nOPENROWSET \n(\n\n    BULK 'taxi_zone_without_header.csv',\n    DATA_SOURCE = 'nyc_taxi_data_raw',\n    FORMAT = 'CSV',\n    PARSER_VERSION = '1.0',\n    FIRST_ROW = 2 \n) \nWITH(\n    LocationID SMALLINT 1,\n    Zone VARCHAR(50) 3,\n    service_zone VARCHAR(15) 4\n    ) AS [result]\n\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "NYC_TAXI_DISCOVERY",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

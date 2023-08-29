@@ -1,0 +1,20 @@
+{
+	"name": "5_create_external_table_calendar",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi_ldw"
+		},
+		"content": {
+			"query": "USE nyc_taxi_ldw\nGO\n\nIF OBJECT_ID('nyc_taxi_ldw.bronze.calendar') IS NOT NULL\n    DROP EXTERNAL TABLE nyc_taxi_ldw.bronze.calendar\nGO\n\nCREATE EXTERNAL TABLE nyc_taxi_ldw.bronze.calendar\n(\n    DATE_KEY INT,\n    DATE DATE,\n    YEAR SMALLINT,\n    MONTH TINYINT,\n    DAY TINYINT,\n    DAYNAME VARCHAR(10),\n    DAY_OF_YEAR SMALLINT,\n    WEEK_OF_MONTH TINYINT,\n    WEEK_OF_YEAR TINYINT,\n    MONTH_NAME VARCHAR(10),\n    YEAR_MONTH INT,\n    YEAR_WEEK INT\n)\nWITH\n(\n    LOCATION = 'raw/calendar.csv',\n    DATA_SOURCE = nyc_taxi_src,\n    FILE_FORMAT = csv_file_format_pv1,\n    REJECT_VALUE = 10,\n    REJECTED_ROW_LOCATION = '/rejections/calendar/'\n)\nGO\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_ldw",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

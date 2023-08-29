@@ -1,0 +1,20 @@
+{
+	"name": "1_create_external_database_tables",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi_ldw"
+		},
+		"content": {
+			"query": "USE master\nGO\n\nIF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'nyc_taxi_ldw')\nCREATE DATABASE nyc_taxi_ldw\nGO\n\nALTER DATABASE nyc_taxi_ldw\nCOLLATE Latin1_General_100_BIN2_UTF8\nGO\n\nUSE nyc_taxi_ldw\nGO\n\n--IF NOT EXISTS (SELECT * FROM sys.schemas where name='bronze')\nCREATE SCHEMA nyc_taxi_ldw.bronze\nGO\n\n--IF NOT EXISTS (SELECT * FROM sys.schemas where name='bronze')\nCREATE SCHEMA silver\nGO\n\n--IF NOT EXISTS (SELECT * FROM sys.schemas where name='bronze')\nCREATE SCHEMA gold\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_ldw",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

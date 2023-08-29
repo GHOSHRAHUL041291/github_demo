@@ -1,0 +1,20 @@
+{
+	"name": "15_create_view_payment_type",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi_ldw"
+		},
+		"content": {
+			"query": "USE nyc_taxi_ldw\nGO\n\nDROP VIEW IF EXISTS bronze.vw_payment_type\nGO\n\nCREATE VIEW bronze.vw_payment_type\nAS\nSELECT payment_type, description\nFROM\nOPENROWSET\n(\n    BULK 'raw/payment_type.json', \n    DATA_SOURCE = 'nyc_taxi_src', \n    FORMAT = 'CSV', \n    FIELDQUOTE = '0x0b', \n    FIELDTERMINATOR = '0x0b'\n)\nWITH\n(\n    jsondoc NVARCHAR(MAX)\n) AS payment_type\nCROSS APPLY OPENJSON(jsondoc)\nWITH\n(\n    payment_type SMALLINT,\n    description NVARCHAR(15) '$.payment_type_desc'\n)\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_ldw",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

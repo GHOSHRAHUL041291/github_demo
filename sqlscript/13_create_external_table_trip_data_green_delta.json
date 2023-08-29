@@ -1,0 +1,20 @@
+{
+	"name": "13_create_external_table_trip_data_green_delta",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi_ldw"
+		},
+		"content": {
+			"query": "USE nyc_taxi_ldw\nGO\n\nIF OBJECT_ID('nyc_taxi_ldw.bronze.trip_data_green_delta') IS NOT NULL\n\tDROP EXTERNAL TABLE nyc_taxi_ldw.bronze.trip_data_green_delta\n\nCREATE EXTERNAL TABLE nyc_taxi_ldw.bronze.trip_data_green_delta \n(\n\t[VendorID] INT,\n\t[lpep_pickup_datetime] datetime2(7),\n\t[lpep_dropoff_datetime] datetime2(7),\n\t[store_and_fwd_flag] CHAR(1),\n\t[RatecodeID] INT,\n\t[PULocationID] INT,\n\t[DOLocationID] INT,\n\t[passenger_count] INT,\n\t[trip_distance] float,\n\t[fare_amount] float,\n\t[extra] float,\n\t[mta_tax] float,\n\t[tip_amount] float,\n\t[tolls_amount] float,\n\t[ehail_fee] INT,\n\t[improvement_surcharge] float,\n\t[total_amount] float,\n\t[payment_type] INT,\n\t[trip_type] INT,\n\t[congestion_surcharge] float\n)\nWITH \n(\n\tLOCATION = 'raw/trip_data_green_parquet',\n\tDATA_SOURCE = nyc_taxi_src,\n\tFILE_FORMAT = delta_file_format\n)\nGO\n\n\n--select sample data from trip_data_green external table\nSELECT TOP (100) [VendorID]\n,[lpep_pickup_datetime]\n,[lpep_dropoff_datetime]\n,[store_and_fwd_flag]\n,[RatecodeID]\n,[PULocationID]\n,[DOLocationID]\n,[passenger_count]\n,[trip_distance]\n,[fare_amount]\n,[extra]\n,[mta_tax]\n,[tip_amount]\n,[tolls_amount]\n,[ehail_fee]\n,[improvement_surcharge]\n,[total_amount]\n,[payment_type]\n,[trip_type]\n,[congestion_surcharge]\n FROM [bronze].[trip_data_green_delta]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_ldw",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"name": "Set Serverless Cost Control",
+	"properties": {
+		"folder": {
+			"name": "Management"
+		},
+		"content": {
+			"query": "select * from sys.dm_external_data_processed;\n\nsp_set_data_processed_limit\n  @type = N'daily',\n  @limit_tb = 1;\n\nsp_set_data_processed_limit\n  @type = N'weekly',\n  @limit_tb = 1;\n\nsp_set_data_processed_limit\n  @type = N'monthly',\n  @limit_tb = 2;\n\n  select * from sys.configurations\n  where name like 'Data Processed %';",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"name": "7_trip_data_green_csv",
+	"properties": {
+		"folder": {
+			"name": "Discovery"
+		},
+		"content": {
+			"query": "USE NYC_TAXI_DISCOVERY;\n\n-- read single file\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'trip_data_green_csv/year=2020/month=01/green_tripdata_2020-01.csv',\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) AS [green_tripdata];\n\n--read all files of type csv under a folder\n\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'trip_data_green_csv/year=2020/month=01/*.csv',\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) AS [green_tripdata];\n\n\n--read all files of type csv under a subfolder\n\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'trip_data_green_csv/year=2020/**',\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) AS [green_tripdata];\n\n--read all files of type csv under from selected folders\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK ('trip_data_green_csv/year=2020/month=01/*.csv',\n              'trip_data_green_csv/year=2020/month=07/*.csv'),\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) AS [green_tripdata];\n\n\n-- read all files of type csv from all folders and subfolders\n\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'trip_data_green_csv/year=*/month=*/*.csv',\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) AS [green_tripdata];\n\n\n-- metadata functions filename() and filepath()\n\nSELECT\n    green_tripdata.filename() AS file_name,\n    green_tripdata.filepath(1) AS year,\n    green_tripdata.filepath(2) AS month,\n    count(1) AS trip_count\nFROM\n    OPENROWSET(\n        BULK 'trip_data_green_csv/year=*/month=*/*.csv',\n        DATA_SOURCE = 'nyc_taxi_data_raw',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) AS [green_tripdata]\nGROUP BY green_tripdata.filename(),green_tripdata.filepath(1),green_tripdata.filepath(2)\nORDER BY green_tripdata.filename(),green_tripdata.filepath(1),green_tripdata.filepath(2); \n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "NYC_TAXI_DISCOVERY",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
