@@ -1,0 +1,20 @@
+{
+	"name": "16_create_view_partition_pruning_trip_data_green_csv",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi_ldw"
+		},
+		"content": {
+			"query": "USE nyc_taxi_ldw\nGO\n\nDROP VIEW IF EXISTS bronze.vw_trip_data_green_csv_partition_pruning\nGO\n\nCREATE VIEW bronze.vw_trip_data_green_csv_partition_pruning\nAS\nSELECT\n    green_tripdata.filename() AS file_name,\n    green_tripdata.filepath(1) AS year,\n    green_tripdata.filepath(2) AS month,\n    green_tripdata.*    \nFROM\n    OPENROWSET(\n        BULK 'raw/trip_data_green_csv/year=*/month=*/*.csv',\n        DATA_SOURCE = 'nyc_taxi_src',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        HEADER_ROW = TRUE\n    ) AS [green_tripdata]\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_ldw",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
