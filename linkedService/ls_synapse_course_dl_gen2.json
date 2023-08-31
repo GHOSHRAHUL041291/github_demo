@@ -1,0 +1,14 @@
+{
+	"name": "ls_synapse_course_dl_gen2",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://synapsecoursedl00001.dfs.core.windows.net/"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
