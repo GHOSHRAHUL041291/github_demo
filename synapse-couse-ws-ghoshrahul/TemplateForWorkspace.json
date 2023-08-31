@@ -456,6 +456,29 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/23_silver_create_external_table_trip_data_green_csv')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "nyc_taxi_ldw"
+				},
+				"content": {
+					"query": "USE nyc_taxi_ldw\nGO\n\nIF OBJECT_ID(silver.trip_data_green_csv) IS NOT NULL\n    DROP EXTERNAL TABLE silver.trip_data_green_csv\nGO\n\nCREATE EXTERNAL TABLE silver.trip_data_green_csv\nWITH(\n    LOCATION='silver/trip_data_green_csv',\n    DATA_SOURCE=nyc_taxi_src,\n    FILE_FORMAT=parquet_file_format\n)\nAS\nSELECT * from bronze.trip_data_green\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "nyc_taxi_ldw",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/2_create_external_data_source')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
