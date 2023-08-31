@@ -1,0 +1,20 @@
+{
+	"name": "ds_silver_calendar_parquet",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_synapse_course_dl_gen2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "silver/calendar",
+				"fileSystem": "nyc-taxi-data"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
