@@ -487,7 +487,7 @@
 					"name": "nyc_taxi_ldw"
 				},
 				"content": {
-					"query": "USE nyc_taxi_ldw\nGO\n/*\nIF OBJECT_ID(silver.trip_data_green_csv) IS NOT NULL\n    DROP EXTERNAL TABLE silver.trip_data_green_csv\nGO\n\nCREATE EXTERNAL TABLE silver.trip_data_green_csv\nWITH(\n    LOCATION='silver/trip_data_green_csv',\n    DATA_SOURCE=nyc_taxi_src,\n    FILE_FORMAT=parquet_file_format\n)\nAS\nSELECT * from bronze.trip_data_green\nGO\n*/\n\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','01';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','02';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','03';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','04';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','05';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','06';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','07';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','08';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','09';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','10';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','11';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','12';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','01';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','02';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','03';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','04';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','05';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','06';\n\n",
+					"query": "USE nyc_taxi_ldw\nGO\n\nIF OBJECT_ID(silver.trip_data_green_csv) IS NOT NULL\n    DROP EXTERNAL TABLE silver.trip_data_green_csv\nGO\n\nCREATE EXTERNAL TABLE silver.trip_data_green_csv\nWITH(\n    LOCATION='silver/trip_data_green_csv',\n    DATA_SOURCE=nyc_taxi_src,\n    FILE_FORMAT=parquet_file_format\n)\nAS\nSELECT * from bronze.trip_data_green\nGO\n\n\n\n--sp silver\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','01';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','02';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','03';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','04';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','05';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','06';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','07';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','08';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','09';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','10';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','11';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','12';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','01';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','02';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','03';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','04';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','05';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','06';\n\n",
 					"metadata": {
 						"language": "sql"
 					},
@@ -856,6 +856,26 @@
 				},
 				"content": {
 					"query": "USE nyc_taxi_ldw\nGO\n\nIF OBJECT_ID('nyc_taxi_ldw.bronze.trip_data_green') IS NOT NULL\n\tDROP EXTERNAL TABLE nyc_taxi_ldw.bronze.trip_data_green\n\nCREATE EXTERNAL TABLE nyc_taxi_ldw.bronze.trip_data_green \n(\n\t[VendorID] INT,\n\t[lpep_pickup_datetime] datetime2(7),\n\t[lpep_dropoff_datetime] datetime2(7),\n\t[store_and_fwd_flag] CHAR(1),\n\t[RatecodeID] INT,\n\t[PULocationID] INT,\n\t[DOLocationID] INT,\n\t[passenger_count] INT,\n\t[trip_distance] float,\n\t[fare_amount] float,\n\t[extra] float,\n\t[mta_tax] float,\n\t[tip_amount] float,\n\t[tolls_amount] float,\n\t[ehail_fee] INT,\n\t[improvement_surcharge] float,\n\t[total_amount] float,\n\t[payment_type] INT,\n\t[trip_type] INT,\n\t[congestion_surcharge] float\n)\nWITH \n(\n\tLOCATION = 'raw/trip_data_green_csv/year=2020/**',\n\tDATA_SOURCE = nyc_taxi_src,\n\tFILE_FORMAT = csv_file_format_pv1,\n\tREJECT_VALUE = 10,\n\tREJECTED_ROW_LOCATION = 'rejections/trip_data_green'\n)\nGO\n\n\n--select sample data from trip_data_green external table\nSELECT TOP (100) [VendorID]\n,[lpep_pickup_datetime]\n,[lpep_dropoff_datetime]\n,[store_and_fwd_flag]\n,[RatecodeID]\n,[PULocationID]\n,[DOLocationID]\n,[passenger_count]\n,[trip_distance]\n,[fare_amount]\n,[extra]\n,[mta_tax]\n,[tip_amount]\n,[tolls_amount]\n,[ehail_fee]\n,[improvement_surcharge]\n,[total_amount]\n,[payment_type]\n,[trip_type]\n,[congestion_surcharge]\n FROM [bronze].[trip_data_green]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "nyc_taxi_ldw",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [file_name]\n,[year]\n,[month]\n,[VendorID]\n,[lpep_pickup_datetime]\n,[lpep_dropoff_datetime]\n,[improvement_surcharge]\n,[total_amount]\n,[payment_type]\n,[trip_type]\n,[congestion_surcharge]\n,[fare_amount]\n,[extra]\n,[mta_tax]\n,[tip_amount]\n,[tolls_amount]\n,[ehail_fee]\n,[store_and_fwd_flag]\n,[RatecodeID]\n,[PULocationID]\n,[DOLocationID]\n,[passenger_count]\n,[trip_distance]\n FROM [bronze].[vw_trip_data_green_csv_partition_pruning]",
 					"metadata": {
 						"language": "sql"
 					},
