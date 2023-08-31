@@ -1,0 +1,20 @@
+{
+	"name": "2_sp_gold_card_vs_cash_report_base_data",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi_ldw/User_sp"
+		},
+		"content": {
+			"query": "USE nyc_taxi_ldw\nGO\n\nCREATE OR ALTER PROCEDURE gold.sp_gold_trip_data_green\n@year VARCHAR(4),\n@month VARCHAR(2)\nAS\nBEGIN\nDECLARE @create_sql_stmt NVARCHAR(MAX),\n        @drop_sql_stmt NVARCHAR(MAX);\nSET @create_sql_stmt = '\nCREATE EXTERNAL TABLE gold.trip_data_green_'+@year+'_'+@month+\n' WITH\n(\n    DATA_SOURCE=nyc_taxi_src,\n    LOCATION=''gold/trip_data_green/year='+@year+'/month='+@month+''',\n    FILE_FORMAT=parquet_file_format\n)\nAS\nSELECT  td.year,\n        td.month,\n        CONVERT(DATE,lpep_pickup_datetime) as trip_date,\n        tz.borough,\n        cal.DAYNAME AS trip_day,\n        CASE WHEN cal.DAYNAME IN (''Saturday'',''Sunday'') THEN ''Y'' ELSE ''N'' END AS trip_day_weekend_ind,\n        SUM(CASE WHEN pt.description = ''Credit card'' then 1 else 0 END) AS card_trip_count,\n        SUM(CASE WHEN pt.description = ''Cash'' then 1 else 0 END) AS cash_trip_count\nFROM silver.vw_trip_data_green_parquet_partition_pruning td\nJOIN silver.taxi_zone tz ON (tz.location_id=td.PULocationID)\nJOIN silver.calendar cal ON (cal.DATE=CONVERT(DATE,td.lpep_pickup_datetime))\nJOIN silver.payment_type  pt ON (pt.payment_type=td.payment_type)\nWHERE td.year='''+@year+'''\nAND   td.month='''+@month+'''\nGROUP BY td.year,\n         td.month,\n         tz.borough,\n         CONVERT(DATE,lpep_pickup_datetime),\n         cal.DAYNAME';\n\nprint(@create_sql_stmt)\n\nEXEC sp_executesql @create_sql_stmt;\nEND\n\nSET @drop_sql_stmt = 'DROP EXTERNAL TABLE gold.trip_data_green_'+@year+'_'+@month;\n\nEXEC sp_executesql @drop_sql_stmt\n\nprint(@drop_sql_stmt)",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_ldw",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
