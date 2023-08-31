@@ -1,0 +1,20 @@
+{
+	"name": "24_silver_create_external_view_trip_data_green_parquet_partitioned",
+	"properties": {
+		"folder": {
+			"name": "nyc_taxi_ldw"
+		},
+		"content": {
+			"query": "USE nyc_taxi_ldw\nGO\n\nDROP VIEW IF EXISTS silver.vw_trip_data_green_parquet_partition_pruning\nGO\n\nCREATE VIEW silver.vw_trip_data_green_parquet_partition_pruning\nAS\nSELECT\n    green_tripdata.filepath(1) AS year_x,\n    green_tripdata.filepath(2) AS month_x,\n    green_tripdata.*    \nFROM\n    OPENROWSET(\n        BULK 'silver/trip_data_green/year=*/month=*/*.parquet',\n        DATA_SOURCE = 'nyc_taxi_src',\n        FORMAT = 'PARQUET'\n    ) AS [green_tripdata]\nGO\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyc_taxi_ldw",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
