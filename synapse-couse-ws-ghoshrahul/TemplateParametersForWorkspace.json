@@ -5,11 +5,17 @@
 		"workspaceName": {
 			"value": "synapse-couse-ws-ghoshrahul"
 		},
+		"ls_nyc_taxi_ldw_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=synapse-couse-ws-ghoshrahul-ondemand.sql.azuresynapse.net;Initial Catalog=nyc_taxi_ldw"
+		},
 		"synapse-couse-ws-ghoshrahul-WorkspaceDefaultSqlServer_connectionString": {
 			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:synapse-couse-ws-ghoshrahul.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
 		},
 		"bing-covid-19-data_sasUri": {
 			"value": ""
+		},
+		"ls_synapse_course_dl_gen2_properties_typeProperties_url": {
+			"value": "https://synapsecoursedl00001.dfs.core.windows.net/"
 		},
 		"synapse-couse-ws-ghoshrahul-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"value": "https://synapsecoursedl00001.dfs.core.windows.net"
