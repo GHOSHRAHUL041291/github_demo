@@ -1,0 +1,14 @@
+{
+	"name": "ls_nyc_taxi_ldw",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=synapse-couse-ws-ghoshrahul-ondemand.sql.azuresynapse.net;Initial Catalog=nyc_taxi_ldw"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
