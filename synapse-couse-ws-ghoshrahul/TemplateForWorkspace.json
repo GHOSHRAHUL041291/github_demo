@@ -487,7 +487,30 @@
 					"name": "nyc_taxi_ldw"
 				},
 				"content": {
-					"query": "USE nyc_taxi_ldw\nGO\n/*\nIF OBJECT_ID(silver.trip_data_green_csv) IS NOT NULL\n    DROP EXTERNAL TABLE silver.trip_data_green_csv\nGO\n\nCREATE EXTERNAL TABLE silver.trip_data_green_csv\nWITH(\n    LOCATION='silver/trip_data_green_csv',\n    DATA_SOURCE=nyc_taxi_src,\n    FILE_FORMAT=parquet_file_format\n)\nAS\nSELECT * from bronze.trip_data_green\nGO\n*/\n\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','01';",
+					"query": "USE nyc_taxi_ldw\nGO\n/*\nIF OBJECT_ID(silver.trip_data_green_csv) IS NOT NULL\n    DROP EXTERNAL TABLE silver.trip_data_green_csv\nGO\n\nCREATE EXTERNAL TABLE silver.trip_data_green_csv\nWITH(\n    LOCATION='silver/trip_data_green_csv',\n    DATA_SOURCE=nyc_taxi_src,\n    FILE_FORMAT=parquet_file_format\n)\nAS\nSELECT * from bronze.trip_data_green\nGO\n*/\n\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','01';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','02';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','03';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','04';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','05';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','06';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','07';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','08';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','09';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','10';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','11';\nEXEC silver.sp_silver_trip_data_green_partitioned '2020','12';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','01';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','02';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','03';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','04';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','05';\nEXEC silver.sp_silver_trip_data_green_partitioned '2021','06';\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "nyc_taxi_ldw",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/24_silver_create_external_view_trip_data_green_parquet_partitioned')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "nyc_taxi_ldw"
+				},
+				"content": {
+					"query": "USE nyc_taxi_ldw\nGO\n\nDROP VIEW IF EXISTS silver.vw_trip_data_green_parquet_partition_pruning\nGO\n\nCREATE VIEW silver.vw_trip_data_green_parquet_partition_pruning\nAS\nSELECT\n    green_tripdata.filepath(1) AS year_x,\n    green_tripdata.filepath(2) AS month_x,\n    green_tripdata.*    \nFROM\n    OPENROWSET(\n        BULK 'silver/trip_data_green/year=*/month=*/*.parquet',\n        DATA_SOURCE = 'nyc_taxi_src',\n        FORMAT = 'PARQUET'\n    ) AS [green_tripdata]\nGO\n\n",
 					"metadata": {
 						"language": "sql"
 					},
